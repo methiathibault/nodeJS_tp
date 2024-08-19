@@ -1,9 +1,10 @@
 const express = require("express");
+let cors = require('cors');
 const app = express();
-
 const pool = require('./data.js');
 
 app.use(express.json());
+app.use(cors());
 
 app.get('/users/', async(req,res) => {
     let conn;
