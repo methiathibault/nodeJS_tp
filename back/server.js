@@ -42,7 +42,7 @@ app.post('/users/', async(req,res) => {
         conn = await pool.getConnection()
         const rows = await conn.query("INSERT INTO users (username, password) VALUES (?,?);",[req.body.username,req.body.password])
         console.log(rows)
-        res.status(200).json(req.body)
+        res.status(200).json("add user ok")
     }catch(err){
         console.log(err)
     }
@@ -56,7 +56,7 @@ app.post('/users/', async(req,res) => {
         conn = await pool.getConnection()
         const rows = await conn.query("UPDATE users SET username = ? WHERE id = ?;",[req.body.username,id])
         console.log(rows)
-        res.status(200).json(rows)
+        res.status(200).json("username modif ok")
     }catch(err){
         console.log(err)
     }
@@ -70,7 +70,7 @@ app.post('/users/', async(req,res) => {
         conn = await pool.getConnection()
         const rows = await conn.query("UPDATE users SET password = ? WHERE id = ?;",[req.body.password,id])
         console.log(rows)
-        res.status(200).json("la modification a bien été effectué")
+        res.status(200).json("modif password ok")
     }catch(err){
         console.log(err)
     }
@@ -84,7 +84,7 @@ app.delete('/users/:id', async(req,res) => {
         conn = await pool.getConnection()
         const rows = await conn.query("DELETE FROM users  WHERE id = ?;",[id])
         console.log(rows)
-        res.status(200).json("la suppression a bien été effectué")
+        res.status(200).json("remove user ok")
     }catch(err){
         console.log(err)
     }
