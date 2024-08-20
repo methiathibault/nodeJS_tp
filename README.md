@@ -1,3 +1,3 @@
-# tp_1
+# NodeJS TP
 ---
 Fait par Thibault Methia et Duncas Costes
