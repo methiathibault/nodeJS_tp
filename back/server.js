@@ -201,6 +201,7 @@ app.post("/register", async(req, res) => {
 
 app.post("/login", async(req, res) => {
     try {
+        console.log("salut")
         const { username, password } = req.body;
         const conn = await pool.getConnection();
         const result = await conn.query("SELECT * FROM users WHERE username = ?", [username]);
@@ -219,6 +220,8 @@ app.post("/login", async(req, res) => {
         res.status(500).json({ error: err })
     }
 })
+
+
 
 function authenticator(req, res, next) {
     const token = req.query.token ? req.query.token : req.headers.authorization;

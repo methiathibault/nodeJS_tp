@@ -17,7 +17,7 @@ export default function RegisterPage() {
 
     return(
         <div>
-            <h1>Login</h1>
+            <h1>REGISTER</h1>
             <div>
                 <p>Username: </p>
                 <input type='text' onChange={e => SetUsername(e.target.value)} />
