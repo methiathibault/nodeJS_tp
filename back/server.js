@@ -104,7 +104,7 @@ app.delete('/users/:id', async(req,res) => {
     }
 })
 
-app.get("/products/", async (req, res) => {
+app.get("/products/", authenticator, async (req, res) => {
     let conn;
     try {
         conn = await pool.getConnection();
@@ -116,7 +116,7 @@ app.get("/products/", async (req, res) => {
     }
 });
 
-app.get("/products/:id", async (req, res) => {
+app.get("/products/:id", authenticator, async (req, res) => {
     let conn;
     try {
         conn = await pool.getConnection();
@@ -130,7 +130,7 @@ app.get("/products/:id", async (req, res) => {
     }
 });
 
-app.post("/products/", async (req, res) => {
+app.post("/products/", authenticator, async (req, res) => {
     let conn;
     try {
         conn = await pool.getConnection();
@@ -147,7 +147,7 @@ app.post("/products/", async (req, res) => {
     }
 });
 
-app.put('/products/:id', async(req,res) => {
+app.put('/products/:id', authenticator, async(req,res) => {
     let conn;
     try {
         conn = await pool.getConnection();
@@ -162,7 +162,7 @@ app.put('/products/:id', async(req,res) => {
     }
 })
 
-app.delete("/products/:id", async (req, res) => {
+app.delete("/products/:id", authenticator, async (req, res) => {
     let conn;
     const id = parseInt(req.params.id);
     try {
@@ -182,8 +182,8 @@ app.post("/register", async(req, res) => {
         const { username, password } = req.body;
         const conn = await pool.getConnection();
         const result = await conn.query("SELECT * FROM users WHERE username = ?", [username]);
-        if (result.lenght > 0) {
-            res.status(400).json({ error: "User already exists"});
+        if (result[0]) {
+            return res.status(400).json({ error: "User already exists"});
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const insertQuery = 'INSERT INTO users (username, password) VALUES (?, ?)';
