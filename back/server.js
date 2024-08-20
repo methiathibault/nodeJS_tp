@@ -7,12 +7,12 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/users/', async(req,res) => {
+    console.log("get all user")
     let conn;
     try{
-        console.log("stat")
         conn = await pool.getConnection()
         const rows = await conn.query("SELECT * FROM users ;")
-        console.log(rows)
+        conn.release();
         res.status(200).json(rows)
     }catch(err){
         console.log(err)
@@ -25,10 +25,9 @@ app.get('/users/:id', async(req,res) => {
     
     let conn;
     try{
-        console.log("stat")
         conn = await pool.getConnection()
         const rows = await conn.query("SELECT * FROM users WHERE id=? ;",[id])
-        console.log(rows)
+        conn.release();
         res.status(200).json(rows)
     }catch(err){
         console.log(err)
@@ -40,10 +39,9 @@ app.post('/users/', async(req,res) => {
 
     let conn;
     try{
-        console.log("stat")
         conn = await pool.getConnection()
         const rows = await conn.query("INSERT INTO users (username, password) VALUES (?,?);",[req.body.username,req.body.password])
-        console.log(rows)
+        conn.release()
         res.status(200).json("add user ok")
     }catch(err){
         console.log(err)
@@ -54,10 +52,9 @@ app.post('/users/', async(req,res) => {
     let id = parseInt(req.params.id)
     let conn;
     try{
-        console.log("stat")
         conn = await pool.getConnection()
         const rows = await conn.query("UPDATE users SET username = ? WHERE id = ?;",[req.body.username,id])
-        console.log(rows)
+        conn.release();
         res.status(200).json("username modif ok")
     }catch(err){
         console.log(err)
@@ -68,24 +65,37 @@ app.post('/users/', async(req,res) => {
     let id = parseInt(req.params.id)
     let conn;
     try{
-        console.log("stat")
         conn = await pool.getConnection()
         const rows = await conn.query("UPDATE users SET password = ? WHERE id = ?;",[req.body.password,id])
-        console.log(rows)
+        conn.release();
         res.status(200).json("modif password ok")
     }catch(err){
         console.log(err)
     }
  })
 
+ app.put('/users/:id', async(req,res) => {
+    let conn;
+    try {
+        conn = await pool.getConnection();
+        await conn.query(
+            "UPDATE users SET username = ?, password = ? WHERE id = ?",
+            [req.body.username, req.body.password, req.params.id]
+        );
+        res.status(200).json("user updated successfully");
+    } catch (err) {
+        res.status(500).json({ error: err });
+    }
+})
+
+
 app.delete('/users/:id', async(req,res) => {
     let id = parseInt(req.params.id)
     let conn;
     try{
-        console.log("stat")
         conn = await pool.getConnection()
         const rows = await conn.query("DELETE FROM users  WHERE id = ?;",[id])
-        console.log(rows)
+        conn.release();
         res.status(200).json("remove user ok")
     }catch(err){
         console.log(err)
