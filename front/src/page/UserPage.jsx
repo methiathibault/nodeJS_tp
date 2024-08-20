@@ -10,7 +10,7 @@ export default function UserPage() {
        
     })
 
-
+    
     function getAllProducts(){
         axios.get("http://localhost:8000/users/")
         .then(res => setUser(res.data))
