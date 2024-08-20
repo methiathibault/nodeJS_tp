@@ -1,51 +1,72 @@
-import React from 'react'
-import { useState,useEffect } from 'react'
+import {React, useState, useEffect} from 'react'
 import axios from 'axios'
 
+
 export default function UserPage() {
-    const [users, setUsers] = useState([]);
-    const [newUserName, setNewUserName] = useState("")
-    const [newUserPass, setNewUserPass] = useState("")
+    const [users, setUser] = useState([])
+    const [newUsers, setNewUser] = useState({
+        username: "",
+        password: "",
+       
+    })
 
-    function changeUsername (){
 
+    function getAllProducts(){
+        axios.get("http://localhost:8000/users/")
+        .then(res => setUser(res.data))
+        .catch(err => console.log(err))
     }
 
-    function changePassword(){
-
+    function deleteProduct(id){
+        axios.delete(`http://localhost:8000/users/${id}`)
+        .then(res => console.log(res))
+        .catch(err => console.log(err))
+        setUser(users.filter(user => user.id !== id))
     }
 
-    function removeUser(){
+    function addProduct(){
+        axios.post("http://localhost:8000/users/", [newUsers])
+        .then(res => console.log(res))
+        .catch(err => console.log(err))
+        setUser([...users, newUsers])
+    }
 
+    function updateProduct(id){
+        axios.put(`http://localhost:8000/users/${id}`, newUsers)
+        .then(res => console.log(res))
+        .catch(err => console.log(err))
+        setUser(users.map(user => user.id === id ? newUsers : user))
     }
     
-    function addUser(){
+    useEffect(() => {
+        getAllProducts()
+    }, [])
 
-    }
+    return (
+        <div>
+            <h1>Users Page</h1>
+                <div>
+                    {users.map((user) => (
+                        <div key={user.id}>
+                            <p className='product'>
+                                {user.username} - {user.password} 
+                                <button onClick={() => deleteProduct(user.id)}>Delete</button>
 
-    useEffect(()=>{
-        axios.get("http://localhost:8000/users/")
-        .then(res => setUsers(res.data))
-        .catch(err=> console.log(err))
-    },[])
-
-  return (
-    <div>
-      <div>UserPage</div>
-
-      <div>
-        {users.map((element) =>(
-
-          <div>
-             <input value={element.username} onChange={(e)=> changeUsername(e.target.value)}/>  -  <input value={element.username} onChange={(e)=> changeUsername(e.target.value)}/>  <button onClick={()=> removeUser()}> delete </button>
-          </div>
-        ))}
-
-          <div>
-             ajout
-             <input onChange={(e)=> setNewUserName(e.target.value)}/>  -  <input onChange={(e)=> setNewUserPass(e.target.value)}/>  <button onClick={()=>addUser()}> ajout </button>
-          </div>
-      </div>
-    </div>
-  )
+                            </p>
+                            <p className='update-product'>
+                                <input type="text" placeholder="username" onChange={(e) => setNewUser({...newUsers, username: e.target.value})}/>
+                                <input type="text" placeholder="password" onChange={(e) => setNewUser({...newUsers, password: e.target.value})}/>
+                                <button onClick={() => updateProduct(user.id)}>Update</button>
+                            </p>
+                        </div>
+                    ))}
+                <p className='add-product'>
+                    <h2>Add User</h2>
+                    <input type="text" placeholder="username" onChange={(e) => setNewUser({...newUsers, username: e.target.value})}/>
+                    <input type="text" placeholder="password" onChange={(e) => setNewUser({...newUsers, password: e.target.value})}/>
+                    <button onClick={addProduct}>Add</button>
+                </p>
+                </div>
+        </div>
+    )
 }
